@@ -78,15 +78,22 @@
             margin-top: 10px;
             height: 40px;
         }
+
+        .directional-button {
+            user-select: none; /* Prevents text selection */
+            -webkit-user-select: none; /* Safari/Chrome */
+            -webkit-touch-callout: none; /* Disables iOS/Android long-press menu */
+            touch-action: none; /* Prevents gestures interfering */
+        }
     </style>
 </head>
 <body>
 <div class="remote">
-    <button id="up" class="up">↑</button>
-    <button class="left" onclick="move('left')">←</button>
+    <button id="up directional-button" class="up">↑</button>
+    <button class="left directional-button" onclick="move('left')">←</button>
     <button class="enter" onclick="clickMouse('left')">CLick</button>
-    <button class="right" onclick="move('right')">→</button>
-    <button class="down" onclick="move('down')">↓</button>
+    <button class="right directional-button" onclick="move('right')">→</button>
+    <button class="down directional-button" onclick="move('down')">↓</button>
     <button class="select" onclick="clickMouse('right')">Right click</button>
     <button class="scroll-up" onclick="scrollMouse(100)">Scroll up</button>
     <button class="scroll-down" onclick="scrollMouse(-100)">Scroll down</button>
