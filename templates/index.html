@@ -1,67 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Remote Control</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
+    <meta charset="UTF-8">
+    <title>Remote Control</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #111;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
 
-    .remote {
-      display: grid;
-      grid-template-columns: 60px 60px 60px;
-      grid-template-rows: 60px 60px 60px;
-      gap: 10px;
-      background: #222;
-      padding: 20px;
-      border-radius: 12px;
-    }
+        .remote {
+            display: grid;
+            grid-template-columns: 60px 60px 60px;
+            grid-template-rows: 60px 60px 60px;
+            gap: 10px;
+            background: #222;
+            padding: 20px;
+            border-radius: 12px;
+        }
 
-    .remote button {
-      background: #444;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-    }
+        .remote button {
+            background: #444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
 
-    .remote button:hover {
-      background: #666;
-    }
+        .remote button:hover {
+            background: #666;
+        }
 
-    .up    { grid-column: 2; grid-row: 1; }
-    .left  { grid-column: 1; grid-row: 2; }
-    .enter { grid-column: 2; grid-row: 2; }
-    .right { grid-column: 3; grid-row: 2; }
-    .down  { grid-column: 2; grid-row: 3; }
-    .scroll-up { grid-column: 1; grid-row: 5; }
-    .scroll-down { grid-column: 3; grid-row: 5; }
-    .select {
-      grid-column: 1 / span 3;
-      grid-row: 4;
-      margin-top: 10px;
-      height: 40px;
-    }
-  </style>
+        .up {
+            grid-column: 2;
+            grid-row: 1;
+        }
+
+        .left {
+            grid-column: 1;
+            grid-row: 2;
+        }
+
+        .enter {
+            grid-column: 2;
+            grid-row: 2;
+        }
+
+        .right {
+            grid-column: 3;
+            grid-row: 2;
+        }
+
+        .down {
+            grid-column: 2;
+            grid-row: 3;
+        }
+
+        .scroll-up {
+            grid-column: 1;
+            grid-row: 5;
+        }
+
+        .scroll-down {
+            grid-column: 3;
+            grid-row: 5;
+        }
+
+        .select {
+            grid-column: 1 / span 3;
+            grid-row: 4;
+            margin-top: 10px;
+            height: 40px;
+        }
+    </style>
 </head>
 <body>
-  <div class="remote">
-    <button class="up">↑</button>
-    <button class="left">←</button>
-    <button class="enter">CLick</button>
-    <button class="right">→</button>
-    <button class="down">↓</button>
-    <button class="select">Right click</button>
-    <button class="scroll-up">Scroll up</button>
-    <button class="scroll-down">Scroll down</button>
-  </div>
+<div class="remote">
+    <button class="up" onclick="move('up')">↑</button>
+    <button class="left" onclick="move('left')">←</button>
+    <button class="enter" onclick="clickMouse('left')">CLick</button>
+    <button class="right" onclick="move('right')">→</button>
+    <button class="down" onclick="move('down')">↓</button>
+    <button class="select" onclick="clickMouse('right')">Right click</button>
+    <button class="scroll-up" onclick="scrollMouse(100)">Scroll up</button>
+    <button class="scroll-down" onclick="scrollMouse(-100)">Scroll down</button>
+</div>
 </body>
+
+<script>
+    const API_URL = 'http://localhost:5000';
+
+    function move(direction) {
+        fetch(`${API_URL}/mouse/move`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({direction, distance: 50})
+        })
+            .then(res => res.json())
+            .then(data => showOutput(data));
+    }
+
+    function clickMouse(button) {
+        fetch(`${API_URL}/mouse/click`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({button})
+        })
+            .then(res => res.json())
+            .then(data => showOutput(data));
+    }
+
+    function scrollMouse(amount) {
+        fetch(`${API_URL}/mouse/scroll`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({amount})
+        })
+            .then(res => res.json())
+            .then(data => showOutput(data));
+    }
+
+    function getMousePosition() {
+        fetch(`${API_URL}/mouse/position`)
+            .then(res => res.json())
+            .then(data => showOutput(data));
+    }
+
+    function showOutput(data) {
+        document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+    }
+</script>
+
 </html>

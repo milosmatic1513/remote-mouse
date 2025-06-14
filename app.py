@@ -1,7 +1,9 @@
 import pyautogui
 from flask import Flask, request, jsonify, render_template
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)  # <- this allows CORS for all routes by default
 
 
 @app.route('/mouse/move', methods=['POST'])
@@ -11,7 +13,7 @@ def move_mouse():
     distance = data.get('distance', 10)
 
     x, y = pyautogui.position()
-
+    print("Test")
     if direction == 'up':
         y -= distance
     elif direction == 'down':
@@ -23,7 +25,7 @@ def move_mouse():
     else:
         return jsonify({'status': 'error', 'message': 'Invalid direction'}), 400
 
-    pyautogui.moveTo(x, y)
+    #pyautogui.moveTo(x, y)
     return jsonify({'status': 'success', 'new_position': {'x': x, 'y': y}})
 
 
@@ -51,7 +53,7 @@ def scroll_mouse():
 
 @app.route('/mouse/position', methods=['GET'])
 def get_position():
-    x, y = pyautogui.position()
+    #x, y = pyautogui.position()
     return jsonify({'status': 'success', 'position': {'x': x, 'y': y}})
 
 
