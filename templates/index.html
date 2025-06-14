@@ -108,7 +108,7 @@
     });
 
 
-    down.addEventListener("mousedown", () => {
+    down.addEventListener("touchstart", () => {
         move("up"); // Call immediately on press
         intervalId = setInterval(() => move("down"), 100); // Repeat every 100ms
     });
@@ -125,8 +125,8 @@
 
     const stopAction = () => clearInterval(intervalId);
 
-    up.addEventListener("mouseup", stopAction);
-    up.addEventListener("mouseleave", stopAction); // In case cursor leaves the button while pressed
+    up.addEventListener("touchend", stopAction);
+    up.addEventListener("touchcancel", stopAction); // In case cursor leaves the button while pressed
 
     function move(direction) {
         fetch(`${API_URL}/mouse/move`, {
