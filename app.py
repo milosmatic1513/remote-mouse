@@ -25,7 +25,7 @@ def move_mouse():
     else:
         return jsonify({'status': 'error', 'message': 'Invalid direction'}), 400
 
-    #pyautogui.moveTo(x, y)
+    pyautogui.moveTo(x, y)
     return jsonify({'status': 'success', 'new_position': {'x': x, 'y': y}})
 
 
@@ -53,7 +53,7 @@ def scroll_mouse():
 
 @app.route('/mouse/position', methods=['GET'])
 def get_position():
-    #x, y = pyautogui.position()
+    x, y = pyautogui.position()
     return jsonify({'status': 'success', 'position': {'x': x, 'y': y}})
 
 
