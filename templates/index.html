@@ -109,33 +109,19 @@
     const left = document.getElementById("left");
     const right = document.getElementById("right");
 
-    up.addEventListener("mousedown", () => {
-        move("up"); // Call immediately on press
-        intervalId = setInterval(() => move("up"), 100); // Repeat every 100ms
+    up.addEventListener("mousedown", (e) => {
+        move("up",e); // Call immediately on press
+        intervalId = setInterval(() => move("up",e), 100); // Repeat every 100ms
     });
 
-
-    down.addEventListener("touchstart", () => {
-        move("up"); // Call immediately on press
-        intervalId = setInterval(() => move("down"), 100); // Repeat every 100ms
-    });
-
-    left.addEventListener("mousedown", () => {
-        move("left"); // Call immediately on press
-        intervalId = setInterval(() => move("left"), 100); // Repeat every 100ms
-    });
-
-    right.addEventListener("mousedown", () => {
-        move("up"); // Call immediately on press
-        intervalId = setInterval(() => move("right"), 100); // Repeat every 100ms
-    });
 
     const stopAction = () => clearInterval(intervalId);
 
     up.addEventListener("touchend", stopAction);
-    up.addEventListener("touchcancel", stopAction); // In case cursor leaves the button while pressed
+    up.addEventListener("touchcancel", stopAction);
 
-    function move(direction) {
+    function move(direction,e) {
+        e.preventDefault();
         fetch(`${API_URL}/mouse/move`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
