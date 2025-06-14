@@ -11,9 +11,8 @@ def move_mouse():
     data = request.get_json()
     direction = data.get('direction')
     distance = data.get('distance', 10)
-
     x, y = pyautogui.position()
-    print("Test")
+
     if direction == 'up':
         y -= distance
     elif direction == 'down':
