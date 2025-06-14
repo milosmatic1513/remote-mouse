@@ -82,7 +82,7 @@
 </head>
 <body>
 <div class="remote">
-    <button class="up" onclick="move('up')">↑</button>
+    <button id="up" class="up">↑</button>
     <button class="left" onclick="move('left')">←</button>
     <button class="enter" onclick="clickMouse('left')">CLick</button>
     <button class="right" onclick="move('right')">→</button>
@@ -94,7 +94,39 @@
 </body>
 
 <script>
-    const API_URL = 'http://localhost:5000';
+    let intervalId;
+    const API_URL = 'http://192.168.1.7:5000';
+
+    const up = document.getElementById("up");
+    const down = document.getElementById("down");
+    const left = document.getElementById("left");
+    const right = document.getElementById("right");
+
+    up.addEventListener("mousedown", () => {
+        move("up"); // Call immediately on press
+        intervalId = setInterval(() => move("up"), 100); // Repeat every 100ms
+    });
+
+
+    down.addEventListener("mousedown", () => {
+        move("up"); // Call immediately on press
+        intervalId = setInterval(() => move("down"), 100); // Repeat every 100ms
+    });
+
+    left.addEventListener("mousedown", () => {
+        move("left"); // Call immediately on press
+        intervalId = setInterval(() => move("left"), 100); // Repeat every 100ms
+    });
+
+    right.addEventListener("mousedown", () => {
+        move("up"); // Call immediately on press
+        intervalId = setInterval(() => move("right"), 100); // Repeat every 100ms
+    });
+
+    const stopAction = () => clearInterval(intervalId);
+
+    up.addEventListener("mouseup", stopAction);
+    up.addEventListener("mouseleave", stopAction); // In case cursor leaves the button while pressed
 
     function move(direction) {
         fetch(`${API_URL}/mouse/move`, {
