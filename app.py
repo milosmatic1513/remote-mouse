@@ -9,10 +9,11 @@ CORS(app)  # <- this allows CORS for all routes by default
 @app.route('/mouse/move', methods=['POST'])
 def move_mouse():
     data = request.get_json()
-    move_x = data.get('moveX', 0)
-    move_y = data.get('moveY', 0)
+    move_x = int(data.get('moveX', 0))
+    move_y = int(data.get('moveY', 0))
+    speed_modifier = int(data.get('speedModifier', 50)) / 100
     x, y = pyautogui.position()
-    pyautogui.moveTo(x+move_x, y+move_y)
+    pyautogui.moveTo(x + move_x * speed_modifier, y - move_y * speed_modifier)
 
     return jsonify({'status': 'success', 'new_position': {'x': x, 'y': y}})
 

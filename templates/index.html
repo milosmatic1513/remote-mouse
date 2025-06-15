@@ -15,14 +15,14 @@
         }
 
         .remote {
-            margin-top: 10rem;
+            margin-top: 2rem;
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 1rem;
             margin-bottom: 2rem;
             background: #222;
             padding: 40px;
-            border-radius: 50px;
+            border-radius: 10px;
             width: 80%;
 
         }
@@ -34,37 +34,12 @@
             cursor: pointer;
             height: 6rem;
             padding: 1.5rem;
-            font-size: 1.5rem;
-            border-radius: 10px;
+            font-size: 1rem;
+            border-radius: 5px;
         }
 
         .remote button:hover {
             background: #666;
-        }
-
-        .up {
-            grid-column: 2;
-            grid-row: 1;
-        }
-
-        .left {
-            grid-column: 1;
-            grid-row: 2;
-        }
-
-        .enter {
-            grid-column: 2;
-            grid-row: 2;
-        }
-
-        .right {
-            grid-column: 3;
-            grid-row: 2;
-        }
-
-        .down {
-            grid-column: 2;
-            grid-row: 3;
         }
 
         .scroll-up {
@@ -83,6 +58,7 @@
             margin-top: 10px;
             height: 40px;
         }
+
         .right-click {
             grid-column: 1 / span 4;
             grid-row: 6;
@@ -92,18 +68,51 @@
 
         #joyDiv {
             margin: auto;
-            height:  50vw;
-            width:  50vw;
+            height: 50vw;
+            width: 50vw;
             grid-column: 1/ span 4;
             grid-row: 1/ span 4;
 
         }
 
-        .directional-button {
-            user-select: none; /* Prevents text selection */
-            -webkit-user-select: none; /* Safari/Chrome */
-            -webkit-touch-callout: none; /* Disables iOS/Android long-press menu */
-            touch-action: none; /* Prevents gestures interfering */
+        .slidecontainer {
+            width: 100%;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 25px;
+            background: #d3d3d3;
+            outline: none;
+            opacity: 0.7;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+        }
+
+        .slider:hover {
+            opacity: 1;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            background: royalblue;
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            background: royalblue;
+            cursor: pointer;
+        }
+
+        #speed-modifier {
+            grid-column: 1/ span 4;
+            grid-row: 9;
         }
     </style>
 </head>
@@ -114,15 +123,18 @@
     <button class="right-click" onclick="clickMouse('right')">Right click</button>
     <button class="scroll-up" onclick="scrollMouse(100)">Scroll up</button>
     <button class="scroll-down" onclick="scrollMouse(-100)">Scroll down</button>
+    <input type="range" min="1" max="100" value="50" class="slider" id="speed-modifier">
+
 </div>
 </body>
 
 <script>
     const API_URL = 'http://localhost:5000';
+    const slider = document.getElementById('speed-modifier');
     const joystick = new JoyStick('joyDiv', {
-        internalFillColor: "grey",
-        internalStrokeColor: "grey",
-        externalStrokeColor: "white"
+        internalFillColor: "royalblue",
+        internalStrokeColor: "royalblue",
+        externalStrokeColor: "grey"
     }, () => {
     });
     setInterval(function () {
@@ -135,7 +147,7 @@
         fetch(`${API_URL}/mouse/move`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({moveX: x, moveY: y})
+            body: JSON.stringify({moveX: x, moveY: y, speedModifier: slider.value})
         })
             .then(res => res.json())
             .then(data => showOutput(data));
