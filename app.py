@@ -1,10 +1,23 @@
-import pyautogui
+#import pyautogui
 import socket
+
 from io import BytesIO
 
 import qrcode
 from flask import Flask, request, jsonify, render_template, abort, send_file
 from flask_cors import CORS
+
+import platform
+
+system = platform.system()
+
+if system == "Windows":
+    from windows import volume_change
+else:
+    def volume_change(amount): print("Unsupported OS.")
+    def set_volume(level): print("Unsupported OS.")
+    def toggle_mute(): print("Unsupported OS.")
+
 
 def get_local_ip():
     # Grab local IP address (works on most LANs)
@@ -87,6 +100,12 @@ def whitelist():
     img_io.seek(0)
     return send_file(img_io, mimetype='image/png')
 
+@app.route('/media/volume', methods=['POST'])
+def volume():
+    data = request.get_json()
+    amount = float(data.get('amount', 1.0))
+    volume_change(amount)
+    return jsonify({'status': 'success', 'action': 'volume', 'amount': amount})
 
 @app.route('/remote')
 def index():

@@ -18,7 +18,6 @@
             margin-top: 2rem;
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
             margin-bottom: 2rem;
             background: #222;
             padding: 40px;
@@ -32,8 +31,7 @@
             color: white;
             border: none;
             cursor: pointer;
-            height: 6rem;
-            padding: 1.5rem;
+            padding: 1rem;
             font-size: 1rem;
             border-radius: 5px;
         }
@@ -43,27 +41,46 @@
         }
 
         .scroll-up {
-            grid-column: 1/span 2;
+            margin-left: 1rem;
+            margin-right: 1rem;
+            grid-column: 4;
             grid-row: 7;
+            margin-bottom: 5px;
+
         }
 
         .scroll-down {
-            grid-column: 3/span 2;
+            margin-left: 1rem;
+            margin-right: 1rem;
+            grid-column: 4;
+            grid-row: 8;
+        }
+
+        .volume-up {
+            margin-left: 1rem;
+            margin-right: 1rem;
+            grid-column: 1;
             grid-row: 7;
+            margin-bottom: 5px;
+        }
+
+        .volume-down {
+            margin-left: 1rem;
+            margin-right: 1rem;
+            grid-column: 1;
+            grid-row: 8;
         }
 
         .left-click {
-            grid-column: 1 / span 4;
-            grid-row: 5;
-            margin-top: 10px;
-            height: 40px;
+            margin: 0.5rem;
+            grid-column: 1 / span 2;
+            grid-row: 1;
         }
 
         .right-click {
-            grid-column: 1 / span 4;
-            grid-row: 6;
-            margin-top: 10px;
-            height: 40px;
+            margin: 0.5rem;
+            grid-column: 3 / span 2;
+            grid-row: 1;
         }
 
         #joyDiv {
@@ -71,7 +88,7 @@
             height: 50vw;
             width: 50vw;
             grid-column: 1/ span 4;
-            grid-row: 1/ span 4;
+            grid-row: 2/ span 4;
 
         }
 
@@ -80,6 +97,7 @@
         }
 
         .slider {
+            margin: 0.5rem;
             -webkit-appearance: none;
             width: 100%;
             height: 25px;
@@ -119,10 +137,26 @@
 <body>
 <div class="remote">
     <div id="joyDiv"></div>
-    <button class="left-click" onclick="clickMouse('left')">Click</button>
-    <button class="right-click" onclick="clickMouse('right')">Right click</button>
-    <button class="scroll-up" onclick="scrollMouse(100)">Scroll up</button>
-    <button class="scroll-down" onclick="scrollMouse(-100)">Scroll down</button>
+    <button class="left-click" onclick="clickMouse('left')">
+        <img src="{{ url_for('static', filename='left-click.svg') }}" alt="SVG Logo" style="height: 5vh">
+    </button>
+    <button class="right-click" onclick="clickMouse('right')">
+        <img src="{{ url_for('static', filename='right-click.svg') }}" alt="SVG Logo" style="height: 5vh">
+    </button>
+    <button class="scroll-up" onclick="scrollMouse(100)">
+        <img src="{{ url_for('static', filename='scroll-down.svg') }}" alt="SVG Logo" style="height: 5vh">
+    </button>
+    <button class="scroll-down" onclick="scrollMouse(-100)">
+        <img src="{{ url_for('static', filename='scroll-up.svg') }}" alt="SVG Logo" style="height: 5vh">
+    </button>
+
+    <button class="volume-up" onclick="changeVolume(5)">
+        <img src="{{ url_for('static', filename='volume-up.svg') }}" alt="SVG Logo" style="height: 5vh">
+    </button>
+    <button class="volume-down" onclick="changeVolume(-5)">
+        <img src="{{ url_for('static', filename='volume-down.svg') }}" alt="SVG Logo" style="height: 5vh">
+    </button>
+
     <input type="range" min="1" max="100" value="50" class="slider" id="speed-modifier">
 
 </div>
@@ -164,6 +198,16 @@
 
     function scrollMouse(amount) {
         fetch(`/mouse/scroll`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({amount})
+        })
+            .then(res => res.json())
+            .then(data => showOutput(data));
+    }
+
+        function changeVolume(amount) {
+        fetch(`/media/volume`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({amount})
