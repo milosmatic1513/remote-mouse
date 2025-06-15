@@ -23,7 +23,7 @@ def volume_change(step=0.05):
         if step > 0:
             volume.SetMasterVolumeLevelScalar(min(current + step, 1.0), None)
         else:
-            volume.SetMasterVolumeLevelScalar(min(current + step, 0.0), None)
+            volume.SetMasterVolumeLevelScalar(max(current + step, 0.0), None)
 
     finally:
         CoUninitialize()
