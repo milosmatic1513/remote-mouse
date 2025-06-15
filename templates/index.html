@@ -3,6 +3,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Remote Control</title>
+    <script src="{{ url_for('static', filename='joy.js') }}"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -81,6 +82,14 @@
             height: 40px;
         }
 
+        #joyDiv {
+            height: 500px;
+            width: 500px;
+            grid-column: 1/ span 3;
+            grid-row: 1/ span 3;
+
+        }
+
         .directional-button {
             user-select: none; /* Prevents text selection */
             -webkit-user-select: none; /* Safari/Chrome */
@@ -91,11 +100,7 @@
 </head>
 <body>
 <div class="remote">
-    <button id="up" class="up directional-button">↑</button>
-    <button id="left" class="left directional-button" onclick="move('left')">←</button>
-    <button class="enter" onclick="clickMouse('left')">Click</button>
-    <button id="right" class="right directional-button" onclick="move('right')">→</button>
-    <button id="down" class="down directional-button" onclick="move('down')">↓</button>
+    <div id="joyDiv"></div>
     <button class="select" onclick="clickMouse('right')">Right click</button>
     <button class="scroll-up" onclick="scrollMouse(100)">Scroll up</button>
     <button class="scroll-down" onclick="scrollMouse(-100)">Scroll down</button>
@@ -103,54 +108,24 @@
 </body>
 
 <script>
-    let intervalId;
-    const API_URL = 'http://192.168.1.7:5000';
-
-    const up = document.getElementById("up");
-    const down = document.getElementById("down");
-    const left = document.getElementById("left");
-    const right = document.getElementById("right");
-
-    up.addEventListener("touchstart", (e) => {
-        move("up", e); // Call immediately on press
-        intervalId = setInterval(() => move("up", e), 100); // Repeat every 100ms
+    const API_URL = 'http://localhost:5000';
+    const joystick = new JoyStick('joyDiv', {
+        internalFillColor: "grey",
+        internalStrokeColor: "grey",
+        externalStrokeColor: "white"
+    }, () => {
     });
+    setInterval(function () {
+        if (joystick.GetX() != 0 || joystick.GetY() != 0) {
+            move(joystick.GetX(), joystick.GetY());
+        }
+    }, 100);
 
-    down.addEventListener("touchstart", (e) => {
-        move("down", e); // Call immediately on press
-        intervalId = setInterval(() => move("down", e), 100); // Repeat every 100ms
-    });
-
-    left.addEventListener("touchstart", (e) => {
-        move("left", e); // Call immediately on press
-        intervalId = setInterval(() => move("left", e), 100); // Repeat every 100ms
-    });
-
-    right.addEventListener("touchstart", (e) => {
-        move("right", e); // Call immediately on press
-        intervalId = setInterval(() => move("right", e), 100); // Repeat every 100ms
-    });
-
-    const stopAction = () => clearInterval(intervalId);
-
-    up.addEventListener("touchend", stopAction);
-    up.addEventListener("touchcancel", stopAction);
-
-    down.addEventListener("touchend", stopAction);
-    down.addEventListener("touchcancel", stopAction);
-
-    left.addEventListener("touchend", stopAction);
-    left.addEventListener("touchcancel", stopAction);
-
-    right.addEventListener("touchend", stopAction);
-    right.addEventListener("touchcancel", stopAction);
-
-    function move(direction, e) {
-        e.preventDefault();
+    function move(x, y) {
         fetch(`${API_URL}/mouse/move`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({direction, distance: 50})
+            body: JSON.stringify({moveX: x, moveY: y})
         })
             .then(res => res.json())
             .then(data => showOutput(data));

@@ -1,4 +1,4 @@
-import pyautogui
+#import pyautogui
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 
@@ -6,31 +6,14 @@ app = Flask(__name__)
 CORS(app)  # <- this allows CORS for all routes by default
 
 
-def lerp(a, b, t):
-    return a + (b - a) * t
-
-
 @app.route('/mouse/move', methods=['POST'])
 def move_mouse():
     data = request.get_json()
-    direction = data.get('direction')
-    distance = data.get('distance', 10)
+    move_x = data.get('moveX', 0)
+    move_y = data.get('moveY', 0)
     x, y = pyautogui.position()
-    new_x, new_y = pyautogui.position()
-    if direction == 'up':
-        new_y = y - distance
-    elif direction == 'down':
-        new_y = y + distance
-    elif direction == 'left':
-        new_x = x - distance
-    elif direction == 'right':
-        new_x = x + distance
-    else:
-        return jsonify({'status': 'error', 'message': 'Invalid direction'}), 400
-    i = 0.0
-    while i <= 1.0:
-        pyautogui.moveTo(int(lerp(x,new_x,i)), int(lerp(y,new_y,i)))
-        i += 0.01
+    pyautogui.moveTo(x+move_x, y+move_y)
+
     return jsonify({'status': 'success', 'new_position': {'x': x, 'y': y}})
 
 
@@ -68,4 +51,4 @@ def index():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
