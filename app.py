@@ -1,9 +1,41 @@
 import pyautogui
-from flask import Flask, request, jsonify, render_template
+import socket
+from io import BytesIO
+
+import qrcode
+from flask import Flask, request, jsonify, render_template, abort, send_file
 from flask_cors import CORS
+
+def get_local_ip():
+    # Grab local IP address (works on most LANs)
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        # Doesn't have to be reachable
+        s.connect(('10.255.255.255', 1))
+        ip = s.getsockname()[0]
+    except Exception:
+        ip = '127.0.0.1'
+    finally:
+        s.close()
+    return ip
 
 app = Flask(__name__)
 CORS(app)  # <- this allows CORS for all routes by default
+
+ALLOWED_IPS = []
+
+with open('whitelist.txt', 'r') as file:
+    ALLOWED_IPS = [line.strip() for line in file if line.strip()]
+
+local_ip = get_local_ip()
+ALLOWED_IPS.append(local_ip)
+
+@app.before_request
+def limit_remote_addr():
+    if request.remote_addr not in ALLOWED_IPS:
+        print(
+            f"User with ip: {request.remote_addr} is trying to access remote! If you want to allow this user to access the remote, add to whitelist and restart")
+        abort(403)  # Forbidden
 
 
 @app.route('/mouse/move', methods=['POST'])
@@ -46,7 +78,17 @@ def get_position():
     return jsonify({'status': 'success', 'position': {'x': x, 'y': y}})
 
 
-@app.route('/')
+@app.route('/', methods=['GET'])
+def whitelist():
+    img = qrcode.make('http://'+local_ip+':5000/remote')
+    type(img)
+    img_io = BytesIO()
+    img.save(img_io, 'PNG')
+    img_io.seek(0)
+    return send_file(img_io, mimetype='image/png')
+
+
+@app.route('/remote')
 def index():
     return render_template('index.html')
 

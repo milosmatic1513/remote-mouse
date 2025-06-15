@@ -129,7 +129,6 @@
 </body>
 
 <script>
-    const API_URL = 'http://localhost:5000';
     const slider = document.getElementById('speed-modifier');
     const joystick = new JoyStick('joyDiv', {
         internalFillColor: "royalblue",
@@ -144,7 +143,7 @@
     }, 100);
 
     function move(x, y) {
-        fetch(`${API_URL}/mouse/move`, {
+        fetch(`/mouse/move`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({moveX: x, moveY: y, speedModifier: slider.value})
@@ -154,7 +153,7 @@
     }
 
     function clickMouse(button) {
-        fetch(`${API_URL}/mouse/click`, {
+        fetch(`/mouse/click`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({button})
@@ -164,7 +163,7 @@
     }
 
     function scrollMouse(amount) {
-        fetch(`${API_URL}/mouse/scroll`, {
+        fetch(`/mouse/scroll`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({amount})
