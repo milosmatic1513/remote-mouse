@@ -17,12 +17,14 @@
         .remote {
             margin-top: 10rem;
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 1rem;
             margin-bottom: 2rem;
             background: #222;
             padding: 40px;
             border-radius: 50px;
+            width: 80%;
+
         }
 
         .remote button {
@@ -30,9 +32,9 @@
             color: white;
             border: none;
             cursor: pointer;
-            height: 10rem;
+            height: 6rem;
             padding: 1.5rem;
-            font-size: 2rem;
+            font-size: 1.5rem;
             border-radius: 10px;
         }
 
@@ -66,27 +68,34 @@
         }
 
         .scroll-up {
-            grid-column: 1;
-            grid-row: 5;
+            grid-column: 1/span 2;
+            grid-row: 7;
         }
 
         .scroll-down {
-            grid-column: 3;
-            grid-row: 5;
+            grid-column: 3/span 2;
+            grid-row: 7;
         }
 
-        .select {
-            grid-column: 1 / span 3;
-            grid-row: 4;
+        .left-click {
+            grid-column: 1 / span 4;
+            grid-row: 5;
+            margin-top: 10px;
+            height: 40px;
+        }
+        .right-click {
+            grid-column: 1 / span 4;
+            grid-row: 6;
             margin-top: 10px;
             height: 40px;
         }
 
         #joyDiv {
-            height: 500px;
-            width: 500px;
-            grid-column: 1/ span 3;
-            grid-row: 1/ span 3;
+            margin: auto;
+            height:  50vw;
+            width:  50vw;
+            grid-column: 1/ span 4;
+            grid-row: 1/ span 4;
 
         }
 
@@ -101,7 +110,8 @@
 <body>
 <div class="remote">
     <div id="joyDiv"></div>
-    <button class="select" onclick="clickMouse('right')">Right click</button>
+    <button class="left-click" onclick="clickMouse('left')">Click</button>
+    <button class="right-click" onclick="clickMouse('right')">Right click</button>
     <button class="scroll-up" onclick="scrollMouse(100)">Scroll up</button>
     <button class="scroll-down" onclick="scrollMouse(-100)">Scroll down</button>
 </div>
