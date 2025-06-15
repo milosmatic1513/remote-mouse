@@ -1,6 +1,6 @@
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 from ctypes import cast, POINTER
-from comtypes import CLSCTX_ALL
+from comtypes import CLSCTX_ALL, CoInitialize,CoUninitialize
 
 def get_volume_interface():
     devices = AudioUtilities.GetSpeakers()
@@ -12,9 +12,13 @@ def set_volume(level):  # level: 0.0 to 1.0
     volume.SetMasterVolumeLevelScalar(level, None)
 
 def volume_change(step=0.05):
-    volume = get_volume_interface()
-    current = volume.GetMasterVolumeLevelScalar()
-    volume.SetMasterVolumeLevelScalar(min(current + step, 1.0), None)
+    CoInitialize()
+    try:
+        volume = get_volume_interface()
+        current = volume.GetMasterVolumeLevelScalar()
+        volume.SetMasterVolumeLevelScalar(min(current + step, 1.0), None)
+    finally:
+        CoUninitialize()
 
 def toggle_mute():
     volume = get_volume_interface()
