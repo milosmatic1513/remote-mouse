@@ -1,4 +1,4 @@
-#import pyautogui
+import pyautogui
 import socket
 
 from io import BytesIO
@@ -115,7 +115,6 @@ def index():
 def mouse_move_socket(data):
     move_x = int(data['x'])
     move_y = int(data['y'])
-    print(move_x,move_y)
     speed_modifier = int(data['mod']) / 100
     x, y = pyautogui.position()
     pyautogui.moveTo(x + move_x * speed_modifier, y - move_y * speed_modifier)
