@@ -6,7 +6,7 @@ from io import BytesIO
 import qrcode
 from flask import Flask, request, jsonify, render_template, abort, send_file
 from flask_cors import CORS
-
+from flask_socketio import SocketIO, send
 import platform
 
 system = platform.system()
@@ -34,7 +34,7 @@ def get_local_ip():
 
 app = Flask(__name__)
 CORS(app)  # <- this allows CORS for all routes by default
-
+socketio = SocketIO(app, cors_allowed_origins="*")
 ALLOWED_IPS = []
 
 with open('whitelist.txt', 'r') as file:
@@ -111,6 +111,14 @@ def volume():
 def index():
     return render_template('index.html')
 
+@socketio.on('mouse_move')
+def mouse_move_socket(data):
+    move_x = int(data['x'])
+    move_y = int(data['y'])
+    print(move_x,move_y)
+    speed_modifier = int(data['mod']) / 100
+    x, y = pyautogui.position()
+    pyautogui.moveTo(x + move_x * speed_modifier, y - move_y * speed_modifier)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

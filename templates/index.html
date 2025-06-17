@@ -133,8 +133,22 @@
             grid-row: 9;
         }
     </style>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 </head>
 <body>
+
+<script>
+    const socket = io();
+
+    socket.on('connect', () => {
+        console.log('Connected to server');
+    });
+
+    function emitMouseMoveEvent(x, y, mod) {
+        socket.emit('mouse_move', {x: x, y: y, mod: mod});
+    }
+</script>
+
 <div class="remote">
     <div id="joyDiv"></div>
     <button class="left-click" onclick="clickMouse('left')">
@@ -170,6 +184,7 @@
         externalStrokeColor: "grey"
     }, () => {
     });
+
     setInterval(function () {
         if (joystick.GetX() != 0 || joystick.GetY() != 0) {
             move(joystick.GetX(), joystick.GetY());
@@ -177,13 +192,14 @@
     }, 100);
 
     function move(x, y) {
-        fetch(`/mouse/move`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({moveX: x, moveY: y, speedModifier: slider.value})
-        })
-            .then(res => res.json())
-            .then(data => showOutput(data));
+        emitMouseMoveEvent(x, y, slider.value);
+        {# fetch(`/mouse/move`, {
+             method: 'POST',
+             headers: {'Content-Type': 'application/json'},
+             body: JSON.stringify({moveX: x, moveY: y, speedModifier: slider.value})
+         })
+             .then(res => res.json())
+             .then(data => showOutput(data));#}
     }
 
     function clickMouse(button) {
@@ -206,7 +222,7 @@
             .then(data => showOutput(data));
     }
 
-        function changeVolume(amount) {
+    function changeVolume(amount) {
         fetch(`/media/volume`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
